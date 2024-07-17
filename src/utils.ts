@@ -1,6 +1,7 @@
 // ------------------------------------------------------------- //
 // 9-6
 // Home Screen part Two
+// 홈 배경 이미지 완성하기
 
 // 이미지 경로를 만들어주는 함수
 // export function makeImagePath(id: string, format?: string) {
