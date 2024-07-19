@@ -254,16 +254,261 @@
 // toggleSearch로 바꿔줌. 이건 검색창을 열 뿐만 아니라 이전 값을 불러와서 반대 값을 돌려주는 역할
 // motion.svg 와 input에 애니메이션 효과 바꿈 transition={{ type: 'linear' }}
 
+// // ------------------------------------------------------------- //
+// // 9-4
+// // Header part Four
+// // useAnimation 사용 : 코드로 애니메이션 실행시키기
+// // 페이지의 스크롤을 내리면 네비게이션의 색 변경
+
+// import { Link, useRouteMatch } from 'react-router-dom';
+// import styled from 'styled-components';
+// import { motion, useAnimation, useScroll } from 'framer-motion';
+// import { useEffect, useState } from 'react';
+
+// const Nav = styled(motion.nav)`
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   position: fixed;
+//   width: 100%;
+//   top: 0;
+//   font-size: 14px;
+//   padding: 20px 60px;
+//   color: white;
+// `;
+
+// const Col = styled.div`
+//   display: flex;
+//   align-items: center;
+// `;
+
+// const Logo = styled(motion.svg)`
+//   margin-right: 50px;
+//   width: 95px;
+//   height: 25px;
+//   fill: ${(props) => props.theme.red};
+//   path {
+//     stroke-width: 6px;
+//     stroke: white;
+//   }
+// `;
+
+// const Items = styled.ul`
+//   display: flex;
+//   align-items: center;
+// `;
+
+// const Item = styled.li`
+//   margin-right: 20px;
+//   color: ${(props) => props.theme.white.darker};
+//   transition: color 0.3s ease-in-out;
+//   position: relative; // 동그라미
+//   display: flex;
+//   justify-content: center;
+//   flex-direction: column;
+//   &:hover {
+//     color: ${(props) => props.theme.white.lighter};
+//   }
+// `;
+
+// const Search = styled.span`
+//   color: white;
+//   display: flex;
+//   align-items: center;
+//   position: relative;
+//   svg {
+//     height: 25px;
+//   }
+// `;
+
+// const Circle = styled(motion.span)`
+//   position: absolute;
+//   width: 5px;
+//   height: 5px;
+//   border-radius: 5px;
+//   bottom: -5px;
+//   left: 0;
+//   right: 0;
+//   margin: 0 auto;
+//   background-color: ${(props) => props.theme.red};
+// `;
+
+// const Input = styled(motion.input)`
+//   transform-origin: right center;
+//   position: absolute;
+//   right: 0px;
+//   padding: 5px 10px;
+//   padding-left: 40px;
+//   z-index: -1;
+//   color: white;
+//   font-size: 16px;
+//   background-color: transparent;
+//   border: 1px solid ${(props) => props.theme.white.lighter};
+// `;
+
+// // normal: 이름은 마음대로 붙임
+// const logoVariants = {
+//   normal: {
+//     fillOpacity: 1,
+//   },
+//   active: {
+//     // fillOpacity: 0, 하나의 값을 가질수도 있고
+//     // 배열로도 만들 수 있음. 그리고 진행하고 싶은 모든 단계들을 명시할 수 있다
+//     fillOpacity: [0, 1, 0],
+//     transition: {
+//       repeat: Infinity,
+//     },
+//   },
+// };
+
+// const navVariants = {
+//   top: {
+//     backgroundColor: 'rgba(0,0,0,0)',
+//   },
+//   scroll: {
+//     backgroundColor: 'rgba(0,0,0,1)',
+//   },
+// };
+
+// function Header() {
+//   const [searchOpen, setSearchOpen] = useState(false);
+//   const homeMatch = useRouteMatch('/');
+//   const tvMatch = useRouteMatch('/tv');
+//   const inputAnimation = useAnimation();
+//   const navAnimation = useAnimation();
+//   const { scrollY } = useScroll();
+//   // ✨ 애니메이션을 실행시키는 또 하나의 방법
+//   // 애니메이션이 상태 변화에 의해서 실행되기 전에, 코드로부터 애니메이션을 실행 시킴
+//   // Component 의 props를 이용해서가 아니라, 코드에서 실행
+//   // 이건 애니메이션들을 동시에 실행시키고 싶을 때 유용
+//   const toggleSearch = () => {
+//     // 만약 검색창이 열려있으면
+//     if (searchOpen) {
+//       // trigger the close animation - 닫는 애니메이션 실행
+//       inputAnimation.start({ scaleX: 0 });
+//     } else {
+//       // trigger the open animation - 여는 애니메이션 실행
+//       inputAnimation.start({ scaleX: 1 });
+//     }
+//     setSearchOpen((prev) => !prev);
+//   };
+//   // ✅ 배경색을 바꾸기 위해서 이렇게 길게 할 필요는 없다
+//   useEffect(() => {
+//     scrollY.on('change', () => {
+//       // console.log(scrollY.get()); // scrollY 의 값을 알아보기 위함
+//       if (scrollY.get() > 80) {
+//         navAnimation.start(
+//           'scroll'
+//           // {backgroundColor: 'rgba(0,0,0,1)', } // 변수 만들어서 쓰기
+//         );
+//       } else {
+//         navAnimation.start(
+//           'top'
+//           // {backgroundColor: 'rgba(0,0,0,0)', } // 변수 만들어서 쓰기
+//         );
+//       }
+//     });
+//   }, [scrollY, navAnimation]);
+//   // [scrollY] 이 값을 읽어내야 함, 왜냐하면 이 값은 Component 를 새로고침하지는 않기 때문
+//   // 그니까 값이 바뀌어도 state(상태)는 변하지 않는다
+
+//   return (
+//     <Nav
+//       variants={navVariants}
+//       // ✅ ainimate={{backgroundColor: scrollY > 80 ? '' : ''}} // 이렇게 해도 됨
+//       animate={navAnimation}
+//       // initial={{ backgroundColor: 'rgba(0,0,0,0)' }} // 변수로 바꿈
+//       initial={'top'}
+//     >
+//       <Col>
+//         <Logo
+//           variants={logoVariants}
+//           whileHover="active"
+//           initial="normal"
+//           xmlns="http://www.w3.org/2000/svg"
+//           width="1024"
+//           height="276.742"
+//           viewBox="0 0 1024 276.742"
+//         >
+//           <motion.path d="M140.803 258.904c-15.404 2.705-31.079 3.516-47.294 5.676l-49.458-144.856v151.073c-15.404 1.621-29.457 3.783-44.051 5.945v-276.742h41.08l56.212 157.021v-157.021h43.511v258.904zm85.131-157.558c16.757 0 42.431-.811 57.835-.811v43.24c-19.189 0-41.619 0-57.835.811v64.322c25.405-1.621 50.809-3.785 76.482-4.596v41.617l-119.724 9.461v-255.39h119.724v43.241h-76.482v58.105zm237.284-58.104h-44.862v198.908c-14.594 0-29.188 0-43.239.539v-199.447h-44.862v-43.242h132.965l-.002 43.242zm70.266 55.132h59.187v43.24h-59.187v98.104h-42.433v-239.718h120.808v43.241h-78.375v55.133zm148.641 103.507c24.594.539 49.456 2.434 73.51 3.783v42.701c-38.646-2.434-77.293-4.863-116.75-5.676v-242.689h43.24v201.881zm109.994 49.457c13.783.812 28.377 1.623 42.43 3.242v-254.58h-42.43v251.338zm231.881-251.338l-54.863 131.615 54.863 145.127c-16.217-2.162-32.432-5.135-48.648-7.838l-31.078-79.994-31.617 73.51c-15.678-2.705-30.812-3.516-46.484-5.678l55.672-126.75-50.269-129.992h46.482l28.377 72.699 30.27-72.699h47.295z" />
+//         </Logo>
+//         <Items>
+//           <Item>
+//             <Link to="/">
+//               Home {homeMatch?.isExact && <Circle layoutId="circle" />}
+//             </Link>
+//           </Item>
+//           <Item>
+//             <Link to="/tv">
+//               Tv Shows {tvMatch && <Circle layoutId="circle" />}
+//             </Link>
+//           </Item>
+//         </Items>
+//       </Col>
+//       <Col>
+//         <Search>
+//           <motion.svg
+//             onClick={toggleSearch}
+//             animate={{ x: searchOpen ? -215 : 0 }}
+//             transition={{ type: 'linear' }}
+//             fill="currentColor"
+//             viewBox="0 0 20 20"
+//             xmlns="http://www.w3.org/2000/svg"
+//           >
+//             <path
+//               fillRule="evenodd"
+//               d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+//               clipRule="evenodd"
+//             ></path>
+//           </motion.svg>
+//           <Input
+//             animate={inputAnimation}
+//             initial={{ scaleX: 0 }}
+//             transition={{ type: 'linear' }}
+//             placeholder="Search for movie or tv show.."
+//           ></Input>
+//         </Search>
+//       </Col>
+//     </Nav>
+//   );
+// }
+
+// export default Header;
+
+// // 애니메이션 실행시키는 또 다른 방법
+// // animate={{ scaleX: searchOpen ? 1 : 0 }}
+// // 이런식으로 Input 속성에 animate 속성을 바로 주는 것이 아니라
+// // 애니메이션 속성이랑 커멘드를 코드로부터 만들어 줌
+
+// // 스크롤 내리면 네비게이션 색상 변경
+// // 이걸 위해서, framer-motion 이 제공하는 Hook 사용
+// // useScroll : 스크롤 감지
+// // 이것은 우리에게 모션 값을 줌
+// // 모션 값은 스크롤을 움직일 때 제일 밑에서부터 얼마나 멀리 있는지 알려줌
+// // 이것은 두 가지 값을 우리에게 줌
+// // 첫 번째는 scrollXProgress, scrollYProgress
+// // 여기서 x, y에 대한 스크롤 진행도를 0에서부터 1사이의 값으로 알 수 있음
+// // 이 값은 우리가 끝에서부터 얼마나 떨어져있는지를 0퍼센트부터 100퍼센트 사이의 값으로 나타내줌
+// // 두 번째는 scrollX, scrollY 다른건 얼마나 멀리 이동했는지를 픽셀 단위로 나타내는 것
+// // 네이게이션 모양 바꿔주기
+// // const Nav = styled(motion.nav)`` 변경
+// // 기본 배경값은 지워주고
+// // <Nav initial={{ backgroundColor: 'rgba(0,0,0,1)' }}>
+// // 최초 배경색을 설정해줌
+// // const navAnimation = useAnimation() 만들어주고
+// // <Nav animate={navAnimation} initial={{ backgroundColor: 'rgba(0,0,0,1)' }}>
+// // 애니메이트 속성 추가
+
 // ------------------------------------------------------------- //
-// 9-4
-// Header part Four
-// useAnimation 사용 : 코드로 애니메이션 실행시키기
-// 페이지의 스크롤을 내리면 네비게이션의 색 변경
+// 9-14
+// Search Redirect
+// react-hook-form 을 이용한 input 제어
 
 import { Link, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, useAnimation, useScroll } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -311,7 +556,7 @@ const Item = styled.li`
   }
 `;
 
-const Search = styled.span`
+const Search = styled.form`
   color: white;
   display: flex;
   align-items: center;
@@ -370,6 +615,10 @@ const navVariants = {
   },
 };
 
+interface IForm {
+  keyword: string;
+}
+
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useRouteMatch('/');
@@ -412,6 +661,9 @@ function Header() {
   // [scrollY] 이 값을 읽어내야 함, 왜냐하면 이 값은 Component 를 새로고침하지는 않기 때문
   // 그니까 값이 바뀌어도 state(상태)는 변하지 않는다
 
+  // {} 안에는 useForm이 반환하는 것들은 여기에 들어감
+  const { register, handleSubmit } = useForm<IForm>();
+  const onValid = (data: IForm) => {};
   return (
     <Nav
       variants={navVariants}
@@ -446,7 +698,7 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -215 : 0 }}
@@ -462,6 +714,7 @@ function Header() {
             ></path>
           </motion.svg>
           <Input
+            {...register('keyword', { required: true, minLength: 2 })}
             animate={inputAnimation}
             initial={{ scaleX: 0 }}
             transition={{ type: 'linear' }}
@@ -474,32 +727,3 @@ function Header() {
 }
 
 export default Header;
-
-// 애니메이션 실행시키는 또 다른 방법
-// animate={{ scaleX: searchOpen ? 1 : 0 }}
-// 이런식으로 Input 속성에 animate 속성을 바로 주는 것이 아니라
-// 애니메이션 속성이랑 커멘드를 코드로부터 만들어 줌
-
-// 스크롤 내리면 네비게이션 색상 변경
-// 이걸 위해서, framer-motion 이 제공하는 Hook 사용
-// useScroll : 스크롤 감지
-// 이것은 우리에게 모션 값을 줌
-// 모션 값은 스크롤을 움직일 때 제일 밑에서부터 얼마나 멀리 있는지 알려줌
-// 이것은 두 가지 값을 우리에게 줌
-// 첫 번째는 scrollXProgress, scrollYProgress
-// 여기서 x, y에 대한 스크롤 진행도를 0에서부터 1사이의 값으로 알 수 있음
-// 이 값은 우리가 끝에서부터 얼마나 떨어져있는지를 0퍼센트부터 100퍼센트 사이의 값으로 나타내줌
-// 두 번째는 scrollX, scrollY 다른건 얼마나 멀리 이동했는지를 픽셀 단위로 나타내는 것
-// 네이게이션 모양 바꿔주기
-// const Nav = styled(motion.nav)`` 변경
-// 기본 배경값은 지워주고
-// <Nav initial={{ backgroundColor: 'rgba(0,0,0,1)' }}>
-// 최초 배경색을 설정해줌
-// const navAnimation = useAnimation() 만들어주고
-// <Nav animate={navAnimation} initial={{ backgroundColor: 'rgba(0,0,0,1)' }}>
-// 애니메이트 속성 추가
-
-// ------------------------------------------------------------- //
-// 9-5
-// Home Screen part One
-// 홈 화면 만들기
