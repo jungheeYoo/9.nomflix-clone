@@ -504,7 +504,7 @@
 // Search Redirect
 // react-hook-form 을 이용한 input 제어
 
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, useAnimation, useScroll } from 'framer-motion';
 import { useEffect, useState } from 'react';
@@ -661,9 +661,14 @@ function Header() {
   // [scrollY] 이 값을 읽어내야 함, 왜냐하면 이 값은 Component 를 새로고침하지는 않기 때문
   // 그니까 값이 바뀌어도 state(상태)는 변하지 않는다
 
+  const history = useHistory();
+
   // {} 안에는 useForm이 반환하는 것들은 여기에 들어감
   const { register, handleSubmit } = useForm<IForm>();
-  const onValid = (data: IForm) => {};
+  const onValid = (data: IForm) => {
+    console.log(data);
+    history.push(`/search?keyword=${data.keyword}`);
+  };
   return (
     <Nav
       variants={navVariants}
